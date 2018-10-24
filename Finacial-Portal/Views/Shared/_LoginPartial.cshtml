@@ -1,0 +1,44 @@
+﻿@using Microsoft.AspNet.Identity
+@using Finacial_Portal.Models
+
+
+@if (Request.IsAuthenticated)
+{
+    var db = new ApplicationDbContext();
+    var user = User.Identity.GetUserId();
+    var userId = db.Users.Find(user).Id;
+
+    var FirstName = db.Users.Find(user).FirstName;
+    var LastName = db.Users.Find(user).LastName;
+    var Email = db.Users.Find(user).Email;
+
+
+    using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@FirstName @LastName</div>
+        <div class="email">@Email</div>
+
+        <div class="btn-group user-helper-dropdown">
+            <i class="material-icons" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">keyboard_arrow_down</i>
+            <ul class="dropdown-menu pull-right">
+                <li><a href=@Url.Action("Index", "Manage")><i class="material-icons">person</i>Profile</a></li>
+                <li role="separator" class="divider"></li>
+                @*<li><a href="javascript:void(0);"><i class="material-icons">group</i>Followers</a></li>
+                <li><a href="javascript:void(0);"><i class="material-icons">shopping_cart</i>Sales</a></li>
+                <li><a href="javascript:void(0);"><i class="material-icons">favorite</i>Likes</a></li>*@
+                <li role="separator" class="divider"></li>
+
+                <li><a href="javascript:document.getElementById('logoutForm').submit()"><i class="material-icons">input</i>Sign Out</a></li>
+            </ul>
+        </div>
+    }
+}
+else
+{
+    <ul class="nav navbar-nav">
+        <li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
+        <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+    </ul>
+}
