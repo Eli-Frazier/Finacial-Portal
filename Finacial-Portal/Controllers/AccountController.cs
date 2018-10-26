@@ -9,6 +9,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Finacial_Portal.Models;
+using System.IO;
 
 namespace Finacial_Portal.Controllers
 {
@@ -147,11 +148,15 @@ namespace Finacial_Portal.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Register(RegisterViewModel model)
+        public async Task<ActionResult> Register(RegisterViewModel model, HttpPostedFileBase Avatar)
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var fileName = Path.GetFileName(Avatar.FileName);
+                Avatar.SaveAs(Path.Combine(Server.MapPath("~/Uploads/Avatars/"), fileName));
+                model.AvatarPath = "/Uploads/Avatars/" + fileName;
+
+                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, FirstName = model.FirstName, LastName = model.LastName, AvatarPath = model.AvatarPath };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {

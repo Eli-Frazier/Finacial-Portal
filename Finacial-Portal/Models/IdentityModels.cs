@@ -12,6 +12,7 @@ namespace Finacial_Portal.Models
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public string AvatarPath { get; set; }
         public int? HouseholdId { get; set; }
 
         public virtual Household Household { get; set; }
@@ -55,5 +56,7 @@ namespace Finacial_Portal.Models
         public DbSet<Budget> Budgets { get; set; }
 
         public DbSet<Household> Households { get; set; }
+
+        public DbSet<TransationType> transationTypes { get; set; }
     }
 }

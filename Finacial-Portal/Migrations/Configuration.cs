@@ -27,7 +27,15 @@ namespace Finacial_Portal.Migrations
                 roleManager.Create(new IdentityRole { Name = "Admin" });
             }
 
+            if (!context.Roles.Any(r => r.Name == "Head of Household"))
+            {
+                roleManager.Create(new IdentityRole { Name = "Head of Household" });
+            }
 
+            if (!context.Roles.Any(r => r.Name == "Household Member"))
+            {
+                roleManager.Create(new IdentityRole { Name = "Household Member" });
+            }
 
             //seed a household
             context.Households.AddOrUpdate(p => p.Name,
@@ -51,12 +59,43 @@ namespace Finacial_Portal.Migrations
                 }, "LavabombAdmin1");
             }
 
+            if (!context.Users.Any(u => u.Email == "Head@mailinator.com"))
+            {
+                userManager.Create(new ApplicationUser
+                {
+                    UserName = "Head@mailinator.com",
+                    Email = "Head@mailinator.com",
+                    FirstName = "Head",
+                    LastName = "Ofhouse",
+                }, "DemoPassword321!@#");
+            }
+            if (!context.Users.Any(u => u.Email == "member@mailinator.com"))
+            {
+                userManager.Create(new ApplicationUser
+                {
+                    UserName = "member@mailinator.com",
+                    Email = "member@mailinator.com",
+                    FirstName = "Member",
+                    LastName = "Ofhouse",
+                }, "DemoPassword321!@#");
+            }
+
 
             //Put users in Roles
             var adminId = userManager.FindByEmail("eli_frazier@yahoo.com").Id;
             userManager.AddToRole(adminId, "Admin");
 
-           
+            adminId = userManager.FindByEmail("Head@mailinator.com").Id;
+            userManager.AddToRole(adminId, "Head of Household");
+
+            adminId = userManager.FindByEmail("member@mailinator.com").Id;
+            userManager.AddToRole(adminId, "Household Member");
+
+            //seed types
+            context.transationTypes.AddOrUpdate(p => p.Name,
+                new TransationType { Name = "Deposit" },
+                new TransationType { Name = "Withdrawal" }
+            );
         }
     }
 }

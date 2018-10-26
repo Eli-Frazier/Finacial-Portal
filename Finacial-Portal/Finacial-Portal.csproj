@@ -202,9 +202,12 @@
     <Compile Include="Controllers\HouseholdsController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\TransactionsController.cs" />
+    <Compile Include="Controllers\TransationTypesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\HouseHelper.cs" />
+    <Compile Include="Helpers\UserHelper.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Account.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -214,6 +217,7 @@
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Transaction.cs" />
+    <Compile Include="Models\TransationType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -370,9 +374,15 @@
     <Content Include="Views\Transactions\Details.cshtml" />
     <Content Include="Views\Transactions\Edit.cshtml" />
     <Content Include="Views\Transactions\Index.cshtml" />
+    <Content Include="Views\TransationTypes\Create.cshtml" />
+    <Content Include="Views\TransationTypes\Delete.cshtml" />
+    <Content Include="Views\TransationTypes\Details.cshtml" />
+    <Content Include="Views\TransationTypes\Edit.cshtml" />
+    <Content Include="Views\TransationTypes\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Uploads\Avatars\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

@@ -7,12 +7,16 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Finacial_Portal.Models;
+using Finacial_Portal.Helpers;
+using Microsoft.AspNet.Identity;
 
 namespace Finacial_Portal.Controllers
 {
     public class HouseholdsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
+        private HouseHelper houseHelper = new HouseHelper();
+        private UserHelper userHelper = new UserHelper();
 
         // GET: Households
         public ActionResult Index()
@@ -48,10 +52,30 @@ namespace Finacial_Portal.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Name")] Household household)
         {
+            var user = User.Identity.GetUserId();
             if (ModelState.IsValid)
             {
                 db.Households.Add(household);
                 db.SaveChanges();
+
+                if(userHelper.IsUserInRole(user, "Household Member"))
+                {
+                    userHelper.RemoveUserFromRole(user, "Household Member");
+                }
+
+                var currentHouse = houseHelper.ListUserHouseholds(user);
+                if (currentHouse.Count > 0)
+                {
+                    foreach(var house in currentHouse)
+                    {
+                        houseHelper.RemoveUserFromHouse(user, house.Id);
+                    }
+                    
+                }
+
+                houseHelper.AddUserToHouse(user, household.Id);
+                userHelper.AddUserToRole(User.Identity.GetUserId(), "Head of Household");
+
                 return RedirectToAction("Index");
             }
 

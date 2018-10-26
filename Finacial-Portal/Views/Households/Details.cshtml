@@ -1,26 +1,40 @@
-﻿@model Finacial_Portal.Models.Household
+﻿@using Finacial_Portal.Helpers
+@model Finacial_Portal.Models.Household
 
 @{
     ViewBag.Title = "Details";
+
+    var userHelper = new UserHelper();
 }
 
-<h2>Details</h2>
+<h2>@Html.DisplayFor(model => model.Name)</h2>
 
 <div>
     <h4>Household</h4>
     <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
+    <h5>Members</h5>
+    <br />
+    <div class="row">
+        @foreach(var member in Model.Users)
+        {
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <div class="info-box bg-blue hover-expand-effect">
+                    <div class="icon">
+                        <img src="~/images/user.png" width="48" height="48" alt="User" />
+                    </div>
+                    
+                    <div class="content">
+                        <div class="text">@member.FirstName @member.LastName</div>
+                        <div class="number">@member.Roles.ToString()</div>
+                    </div>
+                </div>
 
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-
-    </dl>
+            </div>
+        }
+        
+    </div>
+    <p>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+        @Html.ActionLink("Back to List", "Index")
+    </p>
 </div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
