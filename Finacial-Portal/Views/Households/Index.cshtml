@@ -1,4 +1,5 @@
-﻿@model IEnumerable<Finacial_Portal.Models.Household>
+﻿@using Microsoft.AspNet.Identity
+@model IEnumerable<Finacial_Portal.Models.Household>
 
 @{
     ViewBag.Title = "Index";
@@ -9,25 +10,71 @@
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Name)
-        </th>
-        <th></th>
-    </tr>
+<table class="table table-bordered table-striped table-hover js-basic-example dataTable">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Name)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
-}
+    <tbody>
+        @foreach (var item in Model.Where(c => c.Condemned == false))
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.Id }) |
+                    <a href="#" onclick="SendRequest(@User.Identity.GetUserId())">Join</a>
+                </td>
+            </tr>
+        }
+
+    </tbody>
 
 </table>
+
+@section scripts{
+    <script>
+        $('.table').DataTable();
+    </script>
+
+    <script>
+        function SendRequest(userId) {
+            $.ajax({
+                type: 'GET',
+                url: "@Url.Action("AjaxLeave", "Households")",
+                data: { userId: userId },
+                success: function (result) {
+                    if (result === "Success") {
+                        swal({
+                            text: "A request has been sent to join this household",
+                            icon: "success",
+                            buttons: {
+                                cancel: "OK"
+                            },
+                        })
+                            .then((value) => {
+                                switch (value) {
+                                    default:
+                                    window.location.href = "@Url.Action("Index", "Home")";
+                                        //return RedirectToAction("Details", "BlogPosts", new { slug = Slug }, null);
+                                }
+                            });
+                    }
+                    else {
+                        swal("Uh-Oh! Something went wrong while trying to leave...", {
+                            icon: "error"
+                        });
+                    }
+                },
+            });
+        }
+    </script>
+}

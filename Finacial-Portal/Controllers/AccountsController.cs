@@ -37,9 +37,9 @@ namespace Finacial_Portal.Controllers
         }
 
         // GET: Accounts/Create
-        public ActionResult Create()
+        public ActionResult Create(int id)
         {
-            ViewBag.HouseholdId = new SelectList(db.Households, "Id", "Name");
+            ViewBag.HouseholdId = id;
             return View();
         }
 
@@ -48,13 +48,13 @@ namespace Finacial_Portal.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,HouseholdId,Name,Balance,ReconBalance")] Account account)
+        public ActionResult Create([Bind(Include = "HouseholdID,Name,Balance")] Account account)
         {
             if (ModelState.IsValid)
             {
                 db.Accounts.Add(account);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", "Households", new { id = account.HouseholdId });
             }
 
             ViewBag.HouseholdId = new SelectList(db.Households, "Id", "Name", account.HouseholdId);

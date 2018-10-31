@@ -10,15 +10,15 @@ namespace Finacial_Portal.Helpers
 {
     public class UserHelper
     {
-        private UserManager<ApplicationUser> userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()));
-        private ApplicationDbContext db = new ApplicationDbContext();
+        private static UserManager<ApplicationUser> userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()));
+        private static ApplicationDbContext db = new ApplicationDbContext();
 
         public bool IsUserInRole(string userId, string roleName)
         {
             return userManager.IsInRole(userId, roleName);
         }
 
-        public ICollection<string> ListUserRoles(string userId)
+        public static ICollection<string> ListUserRoles(string userId)
         {
             return userManager.GetRoles(userId).ToList();
         }
@@ -55,20 +55,24 @@ namespace Finacial_Portal.Helpers
             return resultList;
         }
 
-       public string AvatarPath(string userId)
+       public static string GetAvatarPath(string id)
         {
+            var userId = db.Users.Find(id).Id; /*HttpContext.Current.User.Identity.GetUserId();*/
             var avatarPath = db.Users.Find(userId).AvatarPath;
-
-            if(avatarPath == null)
-            {
-                db.Users.Find(userId).AvatarPath = "~/images/User.png";
-            }
-            else
-            {
-                db.Users.Find(userId).AvatarPath = avatarPath;
-            }
-
-            return db.Users.Find(userId).AvatarPath;
+            if (userId == null || string.IsNullOrEmpty(avatarPath))    
+                return "/images/User.png";
+            return avatarPath;
         }
+
+        public static int GetHouseholdId()
+        {
+            var userId = HttpContext.Current.User.Identity.GetUserId();
+            if (userId == null)
+                return -1;
+
+            var houseId = db.Users.Find(userId).HouseholdId;
+            return houseId ?? -1;     
+        }
+
     }
 }

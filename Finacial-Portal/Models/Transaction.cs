@@ -24,7 +24,7 @@ namespace Finacial_Portal.Models
 
         //Parents
         public virtual Account Account { get; set; }
-        public virtual ApplicationUser EnteredByUser { get; set; }
+        public virtual ApplicationUser EnteredBy { get; set; }
         public virtual TransationType TransationType { get; set; }
     }
 }

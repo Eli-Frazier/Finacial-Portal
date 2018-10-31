@@ -10,6 +10,11 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Finacial_Portal.Models;
 using System.IO;
+using System.Configuration;
+using System.Net.Mail;
+using Finacial_Portal.ViewModels;
+using System.Collections.Generic;
+using Finacial_Portal.Helpers;
 
 namespace Finacial_Portal.Controllers
 {
@@ -18,6 +23,9 @@ namespace Finacial_Portal.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private ApplicationDbContext db = new ApplicationDbContext();
+        private UserHelper userHelper = new UserHelper();
+        private HouseHelper houseHelper = new HouseHelper();
 
         public AccountController()
         {
@@ -152,9 +160,13 @@ namespace Finacial_Portal.Controllers
         {
             if (ModelState.IsValid)
             {
-                var fileName = Path.GetFileName(Avatar.FileName);
-                Avatar.SaveAs(Path.Combine(Server.MapPath("~/Uploads/Avatars/"), fileName));
-                model.AvatarPath = "/Uploads/Avatars/" + fileName;
+                if(Avatar != null)
+                {
+                    var fileName = Path.GetFileName(Avatar.FileName);
+                    Avatar.SaveAs(Path.Combine(Server.MapPath("~/Uploads/Avatars/"), fileName));
+                    model.AvatarPath = "/Uploads/Avatars/" + fileName;
+                }
+                
 
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email, FirstName = model.FirstName, LastName = model.LastName, AvatarPath = model.AvatarPath };
                 var result = await UserManager.CreateAsync(user, model.Password);
@@ -169,6 +181,56 @@ namespace Finacial_Portal.Controllers
                     // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
                     return RedirectToAction("Index", "Home");
+                }
+                AddErrors(result);
+            }
+
+            // If we got this far, something failed, redisplay form
+            return View(model);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> RegisterFromInvite(AcceptVM model, HttpPostedFileBase Avatar)
+        {
+            if (ModelState.IsValid)
+            {
+                var errorMsg = new List<string>();
+
+                var invite = db.Invitations.FirstOrDefault(i => i.Code == model.Code);
+                if (invite.Accepted == true)
+                    errorMsg.Add("This invite has already been accepted");
+
+                if (DateTime.Now > invite.Expires)
+                    errorMsg.Add("This invite had expired");
+
+
+                if (Avatar != null)
+                {
+                    var fileName = Path.GetFileName(Avatar.FileName);
+                    Avatar.SaveAs(Path.Combine(Server.MapPath("~/Uploads/Avatars/"), fileName));
+                    model.AvatarPath = "/Uploads/Avatars/" + fileName;
+                }
+                
+                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, FirstName = model.FirstName, LastName = model.LastName, AvatarPath = model.AvatarPath };
+
+                
+
+                var result = await UserManager.CreateAsync(user, model.Password);
+                userHelper.AddUserToRole(user.Id, "Household Member");
+                houseHelper.AddUserToHouse(user.Id, invite.HouseholdId);
+                if (result.Succeeded)
+                {
+                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+
+                    // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
+                    // Send an email with this link
+                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+
+                    return RedirectToAction("Details", "Households", new { id = invite.HouseholdId });
                 }
                 AddErrors(result);
             }
@@ -208,7 +270,7 @@ namespace Finacial_Portal.Controllers
             if (ModelState.IsValid)
             {
                 var user = await UserManager.FindByNameAsync(model.Email);
-                if (user == null || !(await UserManager.IsEmailConfirmedAsync(user.Id)))
+                if (user == null)
                 {
                     // Don't reveal that the user does not exist or is not confirmed
                     return View("ForgotPasswordConfirmation");
@@ -216,10 +278,22 @@ namespace Finacial_Portal.Controllers
 
                 // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                 // Send an email with this link
-                // string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
-                // var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);		
-                // await UserManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
-                // return RedirectToAction("ForgotPasswordConfirmation", "Account");
+                string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
+                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+
+                //await UserManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+
+                var from = ConfigurationManager.AppSettings["emailfrom"];
+                var email = new MailMessage(from, model.Email)
+                {
+                    Subject = "Reset Password",
+                    Body = "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>",
+                    IsBodyHtml = true
+                };
+                var svc = new PersonalEmail();
+                await svc.SendAsync(email);
+
+                return RedirectToAction("ForgotPasswordConfirmation", "Account");
             }
 
             // If we got this far, something failed, redisplay form

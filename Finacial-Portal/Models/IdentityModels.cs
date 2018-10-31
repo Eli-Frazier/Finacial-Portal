@@ -18,10 +18,12 @@ namespace Finacial_Portal.Models
         public virtual Household Household { get; set; }
 
         public virtual ICollection<Transaction> Transactions { get; set; }
+        public virtual ICollection<UserNotification> UserNotifications { get; set; }
 
         public ApplicationUser()
         {
             Transactions = new HashSet<Transaction>();
+            UserNotifications = new HashSet<UserNotification>();
         }
 
 
@@ -58,5 +60,9 @@ namespace Finacial_Portal.Models
         public DbSet<Household> Households { get; set; }
 
         public DbSet<TransationType> transationTypes { get; set; }
+
+        public DbSet<UserNotification> UserNotifications { get; set; }
+
+        public System.Data.Entity.DbSet<Finacial_Portal.Models.Invitation> Invitations { get; set; }
     }
 }

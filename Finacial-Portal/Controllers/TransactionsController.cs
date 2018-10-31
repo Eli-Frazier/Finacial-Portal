@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Finacial_Portal.Models;
+using Microsoft.AspNet.Identity;
 
 namespace Finacial_Portal.Controllers
 {
@@ -39,7 +40,9 @@ namespace Finacial_Portal.Controllers
         // GET: Transactions/Create
         public ActionResult Create()
         {
-            ViewBag.AccountId = new SelectList(db.Accounts, "Id", "Name");
+            var userId = User.Identity.GetUserId();
+            ViewBag.AccountId = new SelectList(db.Accounts.Where(u => u.HouseholdId == db.Users.Find(userId).HouseholdId), "Id", "Name");
+            ViewBag.TransactionTypeId = new SelectList(db.transationTypes, "Id", "Name");
             return View();
         }
 
@@ -52,6 +55,9 @@ namespace Finacial_Portal.Controllers
         {
             if (ModelState.IsValid)
             {
+                transaction.Date = DateTime.Now;
+                transaction.EnteredById = User.Identity.GetUserId();
+
                 db.Transactions.Add(transaction);
                 db.SaveChanges();
                 return RedirectToAction("Index");

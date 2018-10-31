@@ -200,9 +200,12 @@
     <Compile Include="Controllers\BudgetsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\HouseholdsController.cs" />
+    <Compile Include="Controllers\InvitationsController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\TransactionsController.cs" />
     <Compile Include="Controllers\TransationTypesController.cs" />
+    <Compile Include="Controllers\UserNotificationsController.cs" />
+    <Compile Include="Extensions\HouseholdExtensions.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -215,19 +218,25 @@
     <Compile Include="Models\BudgetItem.cs" />
     <Compile Include="Models\Household.cs" />
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\Invitation.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Transaction.cs" />
     <Compile Include="Models\TransationType.cs" />
+    <Compile Include="Models\UserNotification.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="ViewModels\AcceptVM.cs" />
+    <Compile Include="ViewModels\InviteVM.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\all-themes.css" />
     <Content Include="Content\animate.css" />
+    <Content Include="Content\bootstrap-tagsinput.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\dataTables.bootstrap.css" />
     <Content Include="Content\materialize.css" />
     <Content Include="Content\morris.css" />
     <Content Include="Content\style.css" />
@@ -285,14 +294,23 @@
     <Content Include="images\user.png" />
     <Content Include="Scripts\admin.js" />
     <Content Include="Scripts\bootstrap-select.js" />
+    <Content Include="Scripts\bootstrap-tagsinput.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="private.config" />
+    <None Include="Properties\PublishProfiles\Financial-PortalEF - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
+    <Content Include="Scripts\buttons.flash.min.js" />
+    <Content Include="Scripts\buttons.html5.min.js" />
+    <Content Include="Scripts\buttons.print.min.js" />
     <Content Include="Scripts\Chart.bundle.js" />
+    <Content Include="Scripts\dataTables.bootstrap.js" />
+    <Content Include="Scripts\dataTables.buttons.min.js" />
     <Content Include="Scripts\demo.js" />
+    <Content Include="Scripts\forgot-password.js" />
     <Content Include="Scripts\index.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
@@ -300,6 +318,7 @@
     <Content Include="Scripts\jquery-3.3.1.slim.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.countTo.js" />
+    <Content Include="Scripts\jquery.dataTables.js" />
     <Content Include="Scripts\jquery.flot.categories.js" />
     <Content Include="Scripts\jquery.flot.js" />
     <Content Include="Scripts\jquery.flot.pie.js" />
@@ -311,9 +330,14 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\jszip.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\morris.js" />
+    <Content Include="Scripts\pdfmake.min.js" />
     <Content Include="Scripts\raphael.min.js" />
+    <Content Include="Scripts\sign-in.js" />
+    <Content Include="Scripts\sign-up.js" />
+    <Content Include="Scripts\vfs_fonts.js" />
     <Content Include="Scripts\waves.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -379,6 +403,18 @@
     <Content Include="Views\TransationTypes\Details.cshtml" />
     <Content Include="Views\TransationTypes\Edit.cshtml" />
     <Content Include="Views\TransationTypes\Index.cshtml" />
+    <Content Include="Views\Households\Invite.cshtml" />
+    <Content Include="Views\UserNotifications\Create.cshtml" />
+    <Content Include="Views\UserNotifications\Delete.cshtml" />
+    <Content Include="Views\UserNotifications\Details.cshtml" />
+    <Content Include="Views\UserNotifications\Edit.cshtml" />
+    <Content Include="Views\UserNotifications\Index.cshtml" />
+    <Content Include="Views\Households\RegisterFromInvite.cshtml" />
+    <Content Include="Views\Invitations\Create.cshtml" />
+    <Content Include="Views\Invitations\Delete.cshtml" />
+    <Content Include="Views\Invitations\Details.cshtml" />
+    <Content Include="Views\Invitations\Edit.cshtml" />
+    <Content Include="Views\Invitations\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

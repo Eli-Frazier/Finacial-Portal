@@ -9,9 +9,15 @@ using System.Web.Mvc;
 using Finacial_Portal.Models;
 using Finacial_Portal.Helpers;
 using Microsoft.AspNet.Identity;
+using static Finacial_Portal.Models.Household;
+using Finacial_Portal.ViewModels;
+using System.Configuration;
+using System.Net.Mail;
+using System.Threading.Tasks;
 
 namespace Finacial_Portal.Controllers
 {
+    [Authorize]
     public class HouseholdsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -63,20 +69,16 @@ namespace Finacial_Portal.Controllers
                     userHelper.RemoveUserFromRole(user, "Household Member");
                 }
 
-                var currentHouse = houseHelper.ListUserHouseholds(user);
-                if (currentHouse.Count > 0)
+                var currentHouse = UserHelper.GetHouseholdId();
+                if (currentHouse != -1)
                 {
-                    foreach(var house in currentHouse)
-                    {
-                        houseHelper.RemoveUserFromHouse(user, house.Id);
-                    }
-                    
+                    houseHelper.RemoveUserFromHouse();
                 }
 
                 houseHelper.AddUserToHouse(user, household.Id);
                 userHelper.AddUserToRole(User.Identity.GetUserId(), "Head of Household");
 
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", "Households", new { id = household.Id });
             }
 
             return View(household);
@@ -139,6 +141,82 @@ namespace Finacial_Portal.Controllers
             return RedirectToAction("Index");
         }
 
+        public string AjaxLeave(string userId, string houseId)
+        {
+            ApplicationUser user = db.Users.Find(userId);
+            Household household = db.Households.Find(Convert.ToInt32(houseId));
+
+            user.HouseholdId = null;
+            db.SaveChanges();
+
+            if (household.Users.Count == 0)
+                household.Condemned = true;
+
+            db.SaveChanges();
+            return "Success";
+        }
+
+        [Authorize(Roles ="Head of Household")]
+        public ActionResult Invite(int id)
+        {
+            var invitation = new InviteVM
+            {
+                HouseholdId = id
+            };
+
+            return View(invitation);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Invite(Invitation invite)
+        {
+            var newInvite = new Invitation
+            {
+                Created = DateTime.Now,
+                Expires = DateTime.Now.AddDays(3),
+                HouseholdId = invite.HouseholdId,
+                Email = invite.Email,
+                Code = Guid.NewGuid()
+            };
+
+            try
+            {
+                var from = ConfigurationManager.AppSettings["emailfrom"];
+
+                var callbackUrl = Url.Action("RegisterFromInvite", "Households", new { email = newInvite.Email, code = newInvite.Code }, protocol: Request.Url.Scheme);
+
+                var email = new MailMessage(from, newInvite.Email)
+                {
+                    Subject = "Household Invite",
+                    Body = "You have been invited to join a household on the Financial Portal-EF. please click <a href=\"" + callbackUrl + "\">here</a> to register an join the household",
+                    IsBodyHtml = true
+                };
+                var svc = new PersonalEmail();
+                await svc.SendAsync(email);
+
+                db.Invitations.Add(newInvite);
+                db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                await Task.FromResult(0);
+            }
+
+            return RedirectToAction("Details", new { id = invite.HouseholdId });
+        }
+
+        public ActionResult RegisterFromInvite(string email, Guid code)
+        {
+            var accept = new AcceptVM
+            {
+                Email = email,
+                Code = code
+            };
+            return View(accept);
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -147,5 +225,7 @@ namespace Finacial_Portal.Controllers
             }
             base.Dispose(disposing);
         }
+
+       
     }
 }

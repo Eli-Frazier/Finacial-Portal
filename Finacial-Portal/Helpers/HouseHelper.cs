@@ -1,4 +1,5 @@
 ﻿using Finacial_Portal.Models;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,10 +13,11 @@ namespace Finacial_Portal.Helpers
 
         public void AddUserToHouse(string userId, int HouseholdId)
         {
-            Household house = db.Households.Find(HouseholdId);
             var newUser = db.Users.Find(userId);
 
-            house.Users.Add(newUser);
+            db.Users.Attach(newUser);
+            newUser.HouseholdId = HouseholdId;
+            
             db.SaveChanges();
         }
         
@@ -26,10 +28,17 @@ namespace Finacial_Portal.Helpers
             return households;
         }
 
-        public bool RemoveUserFromHouse(string userId, int HouseholdId)
+        public bool RemoveUserFromHouse()
         {
-            var result = db.Users.Find(userId).HouseholdId.Equals(null);
-            return result;
+            var userId = HttpContext.Current.User.Identity.GetUserId();
+            if (userId == null)
+                return true;
+
+            var user = db.Users.Find(userId);
+            db.Users.Attach(user);
+            user.HouseholdId = null;
+            db.SaveChanges();
+            return true;
         }
     }
 }
