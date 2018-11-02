@@ -4,31 +4,101 @@
     ViewBag.Title = "Details";
 }
 
-<h2>Details</h2>
+<div class="row">
+    <div class="btn-group-sm">
+        @Html.ActionLink("Back to Household", "Details", "Households", new { id = Model.HouseholdId }, new { @class = "btn btn-default" })
 
-<div>
-    <h4>Budget</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Household.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Household.Name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-
-    </dl>
+    </div>
 </div>
+
+<h2>@Html.DisplayFor(model => model.Name)</h2>
+
+
+<div class="card">
+    <div class="header">
+        <h4>Target: $@Html.DisplayFor(model => model.Target)</h4>
+        <ul class="header-dropdown m-r--5">
+            <li class="dropdown">
+                <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                    <i class="material-icons">more_vert</i>
+                </a>
+                <ul class="dropdown-menu pull-right">
+                    <li>@Html.ActionLink("Edit", "Edit", new { id = Model.Id })</li>
+                    <li>@Html.ActionLink("Add new Item", "Create", "BudgetItems", new { id = Model.Id }, null)</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <div class="body">
+        <div class="row">
+            @foreach (var item in Model.BudgetItems.Where(d => d.Deleted == false))
+            {
+
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box bg-purple hover-zoom-effect">
+                        <div class="icon">
+                            <i class="material-icons">attach_money</i>
+                        </div>
+
+                        <div class="content">
+                            <div class="text">
+                                @item.Name
+
+                            </div>
+                            <div class="number">
+                                @item.Amount
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="pull-right">
+                        @Html.ActionLink("Edit", "Edit", "BudgetItems", new { id = item.Id }, htmlAttributes: new { @class = "btn btn-sm btn-small waves-effect" })
+                        <a href="#"class="btn btn-sm btn-small waves-effect" onclick="ItemDelete(@item.Id)">Delete</a>
+                    </div>
+                </div>
+            }
+        </div>
+
+    </div>
+</div>
+
 <p>
     @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
     @Html.ActionLink("Back to List", "Index")
 </p>
+
+
+@section scripts{
+    <script>
+        function ItemDelete(itemId) {
+            $.ajax({
+                type: 'GET',
+                url: "@Url.Action("ItemDelete", "BudgetItems")",
+                data: { id: itemId },
+                success: function (result) {
+                    if (result === "Success") {
+                        swal({
+                            text: "You have Voided this transaction",
+                            icon: "success",
+                            buttons: {
+                                cancel: "OK"
+                            },
+                        })
+                            .then((value) => {
+                                switch (value) {
+                                    default:
+                                    window.location.href = "@Url.Action("Details", "Budgets", new { id = Model.Id })";
+                                }
+                            });
+                    }
+                    else {
+                        swal("Uh-Oh! Something went wrong while trying to leave...", {
+                            icon: "error"
+                        });
+                    }
+                },
+            });
+        }
+    </script>
+
+}

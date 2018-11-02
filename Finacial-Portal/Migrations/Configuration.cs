@@ -92,9 +92,9 @@ namespace Finacial_Portal.Migrations
             userManager.AddToRole(adminId, "Household Member");
 
             //seed types
-            context.transationTypes.AddOrUpdate(p => p.Name,
-                new TransationType { Name = "Deposit" },
-                new TransationType { Name = "Withdrawal" }
+            context.TransactionTypes.AddOrUpdate(p => p.Name,
+                new TransactionType { Name = "Deposit" },
+                new TransactionType { Name = "Withdrawal" }
             );
         }
     }

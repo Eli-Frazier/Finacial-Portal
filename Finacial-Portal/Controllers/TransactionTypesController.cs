@@ -6,7 +6,7 @@ using Finacial_Portal.Models;
 
 namespace Finacial_Portal.Controllers
 {
-    public class TransationTypesController : Controller
+    public class TransactionTypesController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
@@ -42,16 +42,16 @@ namespace Finacial_Portal.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Name")] TransationType transationType)
+        public ActionResult Create([Bind(Include = "Id,Name")] TransactionType transactionType)
         {
             if (ModelState.IsValid)
             {
-                db.transationTypes.Add(transationType);
+                db.TransactionTypes.Add(transactionType);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(transationType);
+            return View(transactionType);
         }
 
         // GET: TransationTypes/Edit/5
@@ -74,15 +74,15 @@ namespace Finacial_Portal.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Name")] TransationType transationType)
+        public ActionResult Edit([Bind(Include = "Id,Name")] TransactionType transactionType)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(transationType).State = EntityState.Modified;
+                db.Entry(transactionType).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(transationType);
+            return View(transactionType);
         }
 
         // GET: TransationTypes/Delete/5
@@ -105,8 +105,8 @@ namespace Finacial_Portal.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            TransationType transationType = db.transationTypes.Find(id);
-            db.transationTypes.Remove(transationType);
+            TransactionType transactionType = db.TransactionTypes.Find(id);
+            db.TransactionTypes.Remove(transactionType);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

@@ -14,14 +14,15 @@ namespace Finacial_Portal.Models
         public int HouseholdId { get; set; }
 
         //chidren
-        public virtual ICollection<BudgetItem> BudgetItems { get; set; }//---
-                                                                        //  |  
-        //parents                                                       //  | 
-        public virtual Household Household { get; set; }                //  |
-                                                                        //  | 
-        public Budget()                                                 //  |
-        {                                                               //  |
-            BudgetItems = new HashSet<BudgetItem>(); //<---------------------
+        public virtual ICollection<BudgetItem> BudgetItems { get; set; }
+        
+                                                                        
+        //parents                                                       
+        public virtual Household Household { get; set; }                
+                                                                        
+        public Budget()                                                 
+        {                                                               
+            BudgetItems = new HashSet<BudgetItem>();
         }
     }
 }

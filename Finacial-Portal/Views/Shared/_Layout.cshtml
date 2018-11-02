@@ -292,7 +292,7 @@
             <div class="menu">
                 <ul class="list">
                     <li class="header">MAIN NAVIGATION</li>
-                    <li class="active">
+                    <li>
                         <a href=@Url.Action("Index", "Home")>
                             <i class="fa fa-home material-icons"></i>
                             <span>Home</span>
@@ -311,9 +311,9 @@
                                     <li>
                                         @Html.ActionLink("Create new Household", "Create", "Households")
                                     </li>
-                                    <li>
+                                    @*<li>
                                         @Html.ActionLink("Join a Household", "Index", "Households")
-                                    </li>
+                                    </li>*@
                                 }
                                 else
                                 {

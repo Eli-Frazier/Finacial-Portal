@@ -6,11 +6,13 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using Finacial_Portal.Helpers;
 using Finacial_Portal.Models;
 using Microsoft.AspNet.Identity;
 
 namespace Finacial_Portal.Controllers
 {
+    [Authorize]
     public class TransactionsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -41,8 +43,10 @@ namespace Finacial_Portal.Controllers
         public ActionResult Create()
         {
             var userId = User.Identity.GetUserId();
-            ViewBag.AccountId = new SelectList(db.Accounts.Where(u => u.HouseholdId == db.Users.Find(userId).HouseholdId), "Id", "Name");
-            ViewBag.TransactionTypeId = new SelectList(db.transationTypes, "Id", "Name");
+            var houseId = db.Users.Find(userId).HouseholdId;
+            ViewBag.AccountId = new SelectList(db.Accounts.Where(u => u.HouseholdId == houseId), "Id", "Name");
+            ViewBag.TransactionTypeId = new SelectList(db.TransactionTypes, "Id", "Name");
+            ViewBag.BudgetItemId = new SelectList(db.BudgetItems.Where(d => d.Deleted == false), "Id", "Name");
             return View();
         }
 
@@ -51,16 +55,25 @@ namespace Finacial_Portal.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,AccountId,EnteredById,Description,Date,Amount,Type,Reconciled,ReconAmount")] Transaction transaction)
+        public ActionResult Create([Bind(Include = "Id,AccountId,Description,Amount,Type,TransactionTypeId,BudgetItemId")] Transaction transaction)
         {
             if (ModelState.IsValid)
             {
                 transaction.Date = DateTime.Now;
                 transaction.EnteredById = User.Identity.GetUserId();
-
+                
                 db.Transactions.Add(transaction);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+
+                TransactionHelper.AdjustAccountBalance(transaction.Id);
+
+                var balance = db.Accounts.Find(transaction.AccountId).Balance;
+                if (balance < 0)
+                    TempData["overdraft"] = "true";
+                else
+                    TempData["overdraft"] = "false";
+
+                return RedirectToAction("Details", "Households", new { id = db.Accounts.Find(transaction.AccountId).HouseholdId });
             }
 
             ViewBag.AccountId = new SelectList(db.Accounts, "Id", "Name", transaction.AccountId);
@@ -124,6 +137,13 @@ namespace Finacial_Portal.Controllers
             db.Transactions.Remove(transaction);
             db.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+        public string Void(int id)
+        {
+            TransactionHelper.VoidATransaction(id);
+
+            return "Success";
         }
 
         protected override void Dispose(bool disposing)

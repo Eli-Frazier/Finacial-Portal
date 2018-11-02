@@ -37,9 +37,9 @@ namespace Finacial_Portal.Controllers
         }
 
         // GET: BudgetItems/Create
-        public ActionResult Create()
+        public ActionResult Create(int id)
         {
-            ViewBag.BudgetId = new SelectList(db.Budgets, "Id", "Name");
+            ViewBag.BudgetId = id;
             return View();
         }
 
@@ -48,13 +48,13 @@ namespace Finacial_Portal.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,BudgetId,Amount")] BudgetItem budgetItem)
+        public ActionResult Create([Bind(Include = "Id,BudgetId,Amount,Name")] BudgetItem budgetItem)
         {
             if (ModelState.IsValid)
             {
                 db.BudgetItems.Add(budgetItem);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", "Budgets", new { id = budgetItem.BudgetId });
             }
 
             ViewBag.BudgetId = new SelectList(db.Budgets, "Id", "Name", budgetItem.BudgetId);
@@ -88,7 +88,7 @@ namespace Finacial_Portal.Controllers
             {
                 db.Entry(budgetItem).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", "Budgets", new { id = budgetItem.BudgetId });
             }
             ViewBag.BudgetId = new SelectList(db.Budgets, "Id", "Name", budgetItem.BudgetId);
             return View(budgetItem);
@@ -118,6 +118,15 @@ namespace Finacial_Portal.Controllers
             db.BudgetItems.Remove(budgetItem);
             db.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+        public string ItemDelete(int id)
+        {
+            BudgetItem budgetItem = db.BudgetItems.Find(id);
+            budgetItem.Deleted = true;
+            db.SaveChanges();
+            return "Success";
+
         }
 
         protected override void Dispose(bool disposing)

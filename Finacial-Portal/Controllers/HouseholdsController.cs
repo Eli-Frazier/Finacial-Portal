@@ -27,7 +27,7 @@ namespace Finacial_Portal.Controllers
         // GET: Households
         public ActionResult Index()
         {
-            return View(db.Households.ToList());
+            return View(db.Households.Where(c => c.Condemned == false).ToList());
         }
 
         // GET: Households/Details/5
@@ -216,6 +216,8 @@ namespace Finacial_Portal.Controllers
             };
             return View(accept);
         }
+
+
 
         protected override void Dispose(bool disposing)
         {

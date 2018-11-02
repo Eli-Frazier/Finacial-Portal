@@ -5,14 +5,14 @@ using System.Web;
 
 namespace Finacial_Portal.Models
 {
-    public class TransationType
+    public class TransactionType
     {
         public int Id { get; set; }
         public string Name { get; set; }
 
         public virtual ICollection<Transaction> Transactions { get; set; }
 
-        public TransationType()
+        public TransactionType()
         {
             Transactions = new HashSet<Transaction>();
         }

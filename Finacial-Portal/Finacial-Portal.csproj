@@ -203,13 +203,14 @@
     <Compile Include="Controllers\InvitationsController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\TransactionsController.cs" />
-    <Compile Include="Controllers\TransationTypesController.cs" />
+    <Compile Include="Controllers\TransactionTypesController.cs" />
     <Compile Include="Controllers\UserNotificationsController.cs" />
     <Compile Include="Extensions\HouseholdExtensions.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\HouseHelper.cs" />
+    <Compile Include="Helpers\TransactionHelper.cs" />
     <Compile Include="Helpers\UserHelper.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Account.cs" />

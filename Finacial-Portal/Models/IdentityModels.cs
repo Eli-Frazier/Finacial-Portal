@@ -59,10 +59,10 @@ namespace Finacial_Portal.Models
 
         public DbSet<Household> Households { get; set; }
 
-        public DbSet<TransationType> transationTypes { get; set; }
+        public DbSet<TransactionType> TransactionTypes { get; set; }
 
         public DbSet<UserNotification> UserNotifications { get; set; }
 
-        public System.Data.Entity.DbSet<Finacial_Portal.Models.Invitation> Invitations { get; set; }
+        public DbSet<Invitation> Invitations { get; set; }
     }
 }

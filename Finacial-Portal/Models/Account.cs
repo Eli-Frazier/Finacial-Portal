@@ -12,7 +12,7 @@ namespace Finacial_Portal.Models
         public int HouseholdId { get; set; }
 
         public string Name { get; set; }
-        public int Balance { get; set; }
+        public decimal Balance { get; set; }
         public int ReconBalance { get; set; } 
 
         //children
