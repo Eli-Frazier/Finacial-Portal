@@ -1,0 +1,76 @@
+﻿@using Finacial_Portal.Helpers
+@using Microsoft.AspNet.Identity
+@{ 
+    var userId = User.Identity.GetUserId();
+}
+
+<div class="table-responsive">
+    <table class="table table-bordered table-striped table-hover js-basic-example dataTable">
+        <thead>
+            <tr>
+                <th>Account</th>
+                <th>Budget</th>
+                <th>Budget Item</th>
+                <th>Description</th>
+                <th>Entered By</th>
+                <th>Date</th>
+                <th>Debit</th>
+                <th>Credit</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th>Account</th>
+                <th>Budget</th>
+                <th>Budget Item</th>
+                <th>Description</th>
+                <th>Entered By</th>
+                <th>Date</th>
+                <th>Debit</th>
+                <th>Credit</th>
+                <th></th>
+            </tr>
+        </tfoot>
+        <tbody>
+            @foreach (var transaction in TransactionHelper.ListHouseholdTransactions(userId))
+            {
+                <tr>
+                    <td>@transaction.Account.Name</td>
+                    @if (transaction.BudgetItem == null)
+                    {
+                        <td>N/A</td>
+                        <td>N/A</td>
+                    }
+                    else
+                    {
+                        <td>@transaction.BudgetItem.Budget.Name</td>
+                        <td>@transaction.BudgetItem.Name</td>
+                    }
+
+                    <td>@transaction.Description</td>
+                    <td>@transaction.EnteredBy.FirstName</td>
+                    <td>@transaction.Date</td>
+                    @if (transaction.TransactionType.Name == "Withdrawal")
+                    {
+                        <td>$@transaction.Amount</td>
+                        <td></td>
+                    }
+                    else
+                    {
+                        <td></td>
+                        <td>$@transaction.Amount</td>
+                    }
+
+                    @if (User.IsInRole("Head of Household"))
+                    {
+                        <td><button class="btn btn-sm btn-danger waves-red" onclick="Void(@transaction.Id)">Void</button></td>
+                    }
+
+
+                </tr>
+            }
+
+        </tbody>
+    </table>
+</div>

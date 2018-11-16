@@ -51,5 +51,17 @@ namespace Finacial_Portal.Helpers
             
             db.SaveChanges();
         }
+
+        public static void AdjustBudgetBalance(int transactionId)
+        {
+            var transaction = db.Transactions.Find(transactionId);
+
+            if (transaction.BudgetItemId != null)
+            {
+                transaction.BudgetItem.Budget.CurrentBalance += transaction.Amount;
+            }
+
+            db.SaveChanges();
+        }
     }
 }

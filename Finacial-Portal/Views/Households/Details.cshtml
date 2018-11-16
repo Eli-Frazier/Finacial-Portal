@@ -1,7 +1,7 @@
 ﻿@using Finacial_Portal.Helpers
 @using Finacial_Portal.Models
 @using Microsoft.AspNet.Identity
-@model Finacial_Portal.Models.Household
+@model Household
 
 @{
     ViewBag.Title = "Details";
@@ -38,22 +38,33 @@
             </div>
         </div>
     }
+    else
+    {
+        <div class="col-md-6 align-right">
+            <div class="btn-group-lg">
+                <a href=@Url.Action("Create", "Transactions") class="btn btn-lg btn-info waves-effect">Add a transaction</a>
+            </div>
+        </div>
+    }
 
 </div>
 
 <div class="card">
     <div class="header">
         <h3>Members</h3>
-        <ul class="header-dropdown m-r--5">
-            <li class="dropdown">
-                <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                    <i class="material-icons">more_vert</i>
-                </a>
-                <ul class="dropdown-menu pull-right">
-                    <li>@Html.ActionLink("Invite new users", "Invite", "Households", new { id = Model.Id })</li>
-                </ul>
-            </li>
-        </ul>
+        @if(User.IsInRole("Head of Household"))
+        {
+            <ul class="header-dropdown m-r--5">
+                <li class="dropdown">
+                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        <i class="material-icons">more_vert</i>
+                    </a>
+                    <ul class="dropdown-menu pull-right">
+                        <li>@Html.ActionLink("Invite new users", "Invite", "Households", new { id = Model.Id })</li>
+                    </ul>
+                </li>
+            </ul>
+        }
     </div>
     <div class="body">
         <div class="row">
@@ -83,21 +94,25 @@
     </div>
     <div id="accounts"></div>
 </div>
+
 <br />
 
 <div class="card">
     <div class="header">
         <h3>Bank Accounts</h3>
-        <ul class="header-dropdown m-r--5">
-            <li class="dropdown">
-                <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                    <i class="material-icons">more_vert</i>
-                </a>
-                <ul class="dropdown-menu pull-right">
-                    <li>@Html.ActionLink("Add new account", "Create", "Accounts", new { id = Model.Id })</li>
-                </ul>
-            </li>
-        </ul>
+        @if(User.IsInRole("Head of Household"))
+        {
+            <ul class="header-dropdown m-r--5">
+                <li class="dropdown">
+                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        <i class="material-icons">more_vert</i>
+                    </a>
+                    <ul class="dropdown-menu pull-right">
+                        <li>@Html.ActionLink("Add new account", "Create", "Accounts", new { id = Model.Id })</li>
+                    </ul>
+                </li>
+            </ul>
+        }
     </div>
     <div class="body">
         <div class="row">
@@ -135,16 +150,19 @@
 <div class="card">
     <div class="header">
         <h3>Budgets</h3>
-        <ul class="header-dropdown m-r--5">
-            <li class="dropdown">
-                <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                    <i class="material-icons">more_vert</i>
-                </a>
-                <ul class="dropdown-menu pull-right">
-                    <li>@Html.ActionLink("Add new budget", "Create", "Budgets", new { id = Model.Id }, null)</li>
-                </ul>
-            </li>
-        </ul>
+        @if (User.IsInRole("Head of Household"))
+        {
+            <ul class="header-dropdown m-r--5">
+                <li class="dropdown">
+                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        <i class="material-icons">more_vert</i>
+                    </a>
+                    <ul class="dropdown-menu pull-right">
+                        <li>@Html.ActionLink("Add new budget", "Create", "Budgets", new { id = Model.Id }, null)</li>
+                    </ul>
+                </li>
+            </ul>
+        }
     </div>
     <div class="body">
         <div class="row">
@@ -191,101 +209,30 @@
         </ul>
     </div>
     <div class="body">
-        <div class="table-responsive">
-            <table class="table table-bordered table-striped table-hover js-basic-example dataTable">
-                <thead>
-                    <tr>
-                        <th>Account</th>
-                        <th>Budget</th>
-                        <th>Budget Item</th>
-                        <th>Description</th>
-                        <th>Entered By</th>
-                        <th>Date</th>
-                        <th>Debit</th>
-                        <th>Credit</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tfoot>
-                    <tr>
-                        <th>Account</th>
-                        <th>Budget</th>
-                        <th>Budget Item</th>
-                        <th>Description</th>
-                        <th>Entered By</th>
-                        <th>Date</th>
-                        <th>Debit</th>
-                        <th>Credit</th>
-                        <th></th>
-                    </tr>
-                </tfoot>
-                <tbody>
-                    @foreach (var transaction in TransactionHelper.ListHouseholdTransactions(userId))
-                    {
-                        <tr>
-                            <td>@transaction.Account.Name</td>
-                            @if (transaction.BudgetItem == null)
-                            {
-                                <td>N/A</td>
-                                <td>N/A</td>
-                            }
-                            else
-                            {
-                                <td>@transaction.BudgetItem.Budget.Name</td>
-                                <td>@transaction.BudgetItem.Name</td>
-                            }
-
-                            <td>@transaction.Description</td>
-                            <td>@transaction.EnteredBy.FirstName</td>
-                            <td>@transaction.Date</td>
-                            @if (transaction.TransactionType.Name == "Withdrawal")
-                            {
-                                <td>$@transaction.Amount</td>
-                                <td></td>
-                            }
-                            else
-                            {
-                                <td></td>
-                                <td>$@transaction.Amount</td>
-                            }
-
-                            @if(User.IsInRole("Head of Household"))
-                            {
-                                <td><button class="btn btn-sm btn-danger waves-red" onclick="Void(@transaction.Id)">Void</button></td>
-                            }
-                            
-
-                        </tr>
-                    }
-
-                </tbody>
-            </table>
-        </div>
+       @Html.Partial("_TransactionsTable")
     </div>
 </div>
 
 <br />
-<div class="row">
-    <div class="col-md-6">
-        <div class="panel panel-danger">
-            <div class="panel-heading">
-                <h3>Leave House</h3>
-            </div>
-            <div class="panel-body">
-                @{
-                    var householdId = Model.Id;
-                }
-                <p>By clicking this button you will leave this household. If you are the only person in this house, it will be deleted</p>
-                <button class="btn btn-danger" onclick="AjaxLeave('@userId', '@householdId')">Leave</button>
+@if(User.IsInRole("Household Member") || (User.IsInRole("Head of Household") && Model.Users.Count == 1))
+{
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-danger">
+                <div class="panel-heading">
+                    <h3>Leave House</h3>
+                </div>
+                <div class="panel-body">
+                    @{
+                        var householdId = Model.Id;
+                    }
+                    <p>By clicking this button you will leave this household. If you are the only person in this house, it will be deleted</p>
+                    <button class="btn btn-danger" onclick="AjaxLeave('@userId', '@householdId')">Leave</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
-
+}
 
 
 @section scripts{

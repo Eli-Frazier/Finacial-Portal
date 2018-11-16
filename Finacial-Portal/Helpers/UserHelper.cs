@@ -74,5 +74,17 @@ namespace Finacial_Portal.Helpers
             return houseId ?? -1;     
         }
 
+        public ICollection<ApplicationUser> UsersNotInHouse()
+        {
+            var resultList = new List<ApplicationUser>();
+            var List = userManager.Users.ToList();
+            foreach (var user in List)
+            {
+                if (user.HouseholdId == null)
+                    resultList.Add(user);
+            }
+
+            return resultList;
+        }
     }
 }

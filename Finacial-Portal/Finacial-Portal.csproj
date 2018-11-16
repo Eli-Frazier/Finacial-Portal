@@ -202,6 +202,7 @@
     <Compile Include="Controllers\HouseholdsController.cs" />
     <Compile Include="Controllers\InvitationsController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\MorrisController.cs" />
     <Compile Include="Controllers\TransactionsController.cs" />
     <Compile Include="Controllers\TransactionTypesController.cs" />
     <Compile Include="Controllers\UserNotificationsController.cs" />
@@ -228,6 +229,7 @@
     <Compile Include="Startup.cs" />
     <Compile Include="ViewModels\AcceptVM.cs" />
     <Compile Include="ViewModels\InviteVM.cs" />
+    <Compile Include="ViewModels\MorrisBudgetBar.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\all-themes.css" />
@@ -340,7 +342,9 @@
     <Content Include="Scripts\sign-up.js" />
     <Content Include="Scripts\vfs_fonts.js" />
     <Content Include="Scripts\waves.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -416,6 +420,8 @@
     <Content Include="Views\Invitations\Details.cshtml" />
     <Content Include="Views\Invitations\Edit.cshtml" />
     <Content Include="Views\Invitations\Index.cshtml" />
+    <Content Include="Views\Shared\_TransactionsTable.cshtml" />
+    <Content Include="Views\Home\Lobby.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

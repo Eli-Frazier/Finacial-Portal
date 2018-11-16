@@ -67,6 +67,8 @@ namespace Finacial_Portal.Controllers
 
                 TransactionHelper.AdjustAccountBalance(transaction.Id);
 
+                TransactionHelper.AdjustBudgetBalance(transaction.Id);
+
                 var balance = db.Accounts.Find(transaction.AccountId).Balance;
                 if (balance < 0)
                     TempData["overdraft"] = "true";

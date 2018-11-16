@@ -73,7 +73,6 @@ namespace Finacial_Portal.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.BudgetId = new SelectList(db.Budgets, "Id", "Name", budgetItem.BudgetId);
             return View(budgetItem);
         }
 
@@ -82,7 +81,7 @@ namespace Finacial_Portal.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,BudgetId,Amount")] BudgetItem budgetItem)
+        public ActionResult Edit([Bind(Include = "Id,BudgetId,Amount,Name")] BudgetItem budgetItem)
         {
             if (ModelState.IsValid)
             {
@@ -90,7 +89,6 @@ namespace Finacial_Portal.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Details", "Budgets", new { id = budgetItem.BudgetId });
             }
-            ViewBag.BudgetId = new SelectList(db.Budgets, "Id", "Name", budgetItem.BudgetId);
             return View(budgetItem);
         }
 

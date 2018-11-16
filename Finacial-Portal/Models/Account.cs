@@ -13,7 +13,7 @@ namespace Finacial_Portal.Models
 
         public string Name { get; set; }
         public decimal Balance { get; set; }
-        public int ReconBalance { get; set; } 
+        public int? ReconBalance { get; set; } 
 
         //children
         public virtual ICollection<Transaction> Transactions { get; set; }

@@ -6,28 +6,35 @@
     ViewBag.Title = "Invite";
 }
 
-<h2>Invite</h2>
 
-@using (Html.BeginForm("Invite", "Households", FormMethod.Post))
-{
-    @Html.AntiForgeryToken();
-    @Html.HiddenFor(model => model.HouseholdId)
 
-    <div class="row">
-        <div class="col-md-6">
-            <p>Enter as many emails as you'd like to send invites</p>
+<div class="card">
+    @using (Html.BeginForm("Invite", "Households", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken();
+        @Html.HiddenFor(model => model.HouseholdId)
+        <div class="header">
+            <h2>Invite</h2>
+        </div>
 
-            <div class="form-group demo-tagsinput-area">
-                <div class="form-line">
-                    @Html.TextBoxFor(e => e.Email, null, htmlAttributes: new { @class = "form-control" })
-                    @*<input type="text" class="form-control" data-role="tagsinput">*@
+        <div class="body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p>Enter an email to send a link to join your household</p>
+
+                    <div class="form-group">
+                        <div class="form-line">
+                            @Html.TextBoxFor(e => e.Email, null, htmlAttributes: new { @class = "form-control" })
+                            @*<input type="text" class="form-control" data-role="tagsinput">*@
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="submit" class="btn btn-default waves-effect">
+                    </div>
                 </div>
             </div>
-
-            <div class="form-group">
-                <input type="submit" class="btn btn-default waves-effect">
-            </div>
         </div>
-    </div>
-}
+    }
+</div>
 

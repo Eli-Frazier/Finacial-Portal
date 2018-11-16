@@ -22,7 +22,7 @@ namespace Finacial_Portal.Models
         public DateTime Date { get; set; }
         public decimal Amount { get; set; }
         public bool Reconciled { get; set; }
-        public decimal ReconAmount { get; set; }
+        public decimal? ReconAmount { get; set; }
         public bool Void { get; set; }
 
         //Parents

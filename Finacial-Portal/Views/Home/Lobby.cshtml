@@ -1,0 +1,64 @@
+﻿@using Finacial_Portal.Helpers
+@using Microsoft.AspNet.Identity
+@using Finacial_Portal.Models
+
+@{ 
+    var userId = User.Identity.GetUserId();
+    UserHelper userHelper = new UserHelper();
+}
+
+<style>
+    .member {
+        padding-top: 15px;
+        padding-bottom: 15px;
+    }
+</style>
+
+<div class="card">
+    <div class="header">
+        Lobby
+    </div>
+    <div class="body">
+        <div class="row">
+            @foreach (var user in userHelper.UsersNotInHouse())
+            {
+                if (user.Id == userId)
+                {
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <div class="info-box bg-blue hover-expand-effect">
+                            <div class="icon">
+                                <img class="member" src="@UserHelper.GetAvatarPath(user.Id)" width="50" height="80" alt="User" />
+                            </div>
+
+                            <div class="content">
+                                <div class="text small">YOU</div>
+                                <div class="number">
+                                    @user.FirstName @user.LastName
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                }
+                else
+                {
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <div class="info-box bg-blue hover-expand-effect">
+                            <div class="icon">
+                                <img class="member" src="@UserHelper.GetAvatarPath(user.Id)" width="50" height="80" alt="User" />
+                            </div>
+
+                            <div class="content">
+                                <div class="number">
+                                    @user.FirstName @user.LastName
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                }
+                
+            }
+        </div>
+    </div>
+</div>

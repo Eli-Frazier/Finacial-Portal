@@ -15,6 +15,8 @@ using System.Net.Mail;
 using Finacial_Portal.ViewModels;
 using System.Collections.Generic;
 using Finacial_Portal.Helpers;
+using Microsoft.AspNet.Identity.EntityFramework;
+using System.Data.Entity;
 
 namespace Finacial_Portal.Controllers
 {
@@ -88,7 +90,19 @@ namespace Finacial_Portal.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-                    return RedirectToLocal(returnUrl);
+                    
+                    if (!string.IsNullOrEmpty(returnUrl))
+                        return RedirectToLocal(returnUrl);
+
+                    var userManager = new UserManager<ApplicationUser>(
+                        new UserStore<ApplicationUser>(db));
+                    var userId = userManager.FindByEmail(model.Email).Id;
+                    var user = db.Users.Find(userId);
+
+                    if (user.HouseholdId != null)
+                        return RedirectToAction("Index", "Home");
+                    else
+                        return RedirectToAction("Lobby", "Home");
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:
@@ -505,6 +519,7 @@ namespace Finacial_Portal.Controllers
         #region Helpers
         // Used for XSRF protection when adding external logins
         private const string XsrfKey = "XsrfId";
+        private readonly DbContext context;
 
         private IAuthenticationManager AuthenticationManager
         {
